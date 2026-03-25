@@ -1,0 +1,5 @@
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack'
+export type Goal = 'lose' | 'maintain' | 'gain'
+export type Gender = 'male' | 'female'
+export type Theme = 'light' | 'dark'
+export type DefaultView = 'day' | 'week'
