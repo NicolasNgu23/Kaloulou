@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
+import { profileSchema } from '../model/types'
 import type { CreateProfile, UpdateProfile, Profile } from '../model/types'
 
 export async function getUserProfile(): Promise<Profile | null> {
@@ -12,7 +13,7 @@ export async function getUserProfile(): Promise<Profile | null> {
     .single()
 
   if (error) throw error
-  return data
+  return profileSchema.parse(data)
 }
 
 export async function createUserProfile(profile: CreateProfile & { daily_calorie_target: number }): Promise<Profile> {
@@ -26,7 +27,7 @@ export async function createUserProfile(profile: CreateProfile & { daily_calorie
     .single()
 
   if (error) throw error
-  return data
+  return profileSchema.parse(data)
 }
 
 export async function updateUserProfile(updates: UpdateProfile & { daily_calorie_target?: number }): Promise<Profile> {
@@ -41,5 +42,5 @@ export async function updateUserProfile(updates: UpdateProfile & { daily_calorie
     .single()
 
   if (error) throw error
-  return data
+  return profileSchema.parse(data)
 }

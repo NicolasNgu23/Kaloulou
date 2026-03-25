@@ -1,6 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
 import { calculateCalories } from '@/shared/lib/utils'
-import { getFoodItems } from '@/entities/food-item/api'
 import type { MealEntry, CreateMealEntry } from '../model/types'
 import { formatDate } from '@/shared/lib/utils'
 
@@ -39,9 +38,13 @@ export async function addMealEntry(entry: CreateMealEntry): Promise<MealEntry> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Non authentifié')
 
-  const foodItems = await getFoodItems()
-  const foodItem = foodItems.find(f => f.id === entry.food_item_id)
-  if (!foodItem) throw new Error('Aliment non trouvé')
+  const { data: foodItem, error: foodError } = await supabase
+    .from('food_items')
+    .select('calories_per_100g')
+    .eq('id', entry.food_item_id)
+    .single<{ calories_per_100g: number }>()
+
+  if (foodError || !foodItem) throw new Error('Aliment non trouvé')
 
   const calories = calculateCalories(foodItem.calories_per_100g, entry.quantity)
 
@@ -49,16 +52,20 @@ export async function addMealEntry(entry: CreateMealEntry): Promise<MealEntry> {
     .from('meal_entries')
     .insert({ ...entry, user_id: user.id, calories })
     .select('*, food_items(*)')
-    .single()
+    .single<MealEntry>()
 
   if (error) throw error
   return data
 }
 
 export async function updateMealEntry(id: string, quantity: number, food_item_id: string): Promise<MealEntry> {
-  const foodItems = await getFoodItems()
-  const foodItem = foodItems.find(f => f.id === food_item_id)
-  if (!foodItem) throw new Error('Aliment non trouvé')
+  const { data: foodItem, error: foodError } = await supabase
+    .from('food_items')
+    .select('calories_per_100g')
+    .eq('id', food_item_id)
+    .single<{ calories_per_100g: number }>()
+
+  if (foodError || !foodItem) throw new Error('Aliment non trouvé')
 
   const calories = calculateCalories(foodItem.calories_per_100g, quantity)
 
@@ -67,7 +74,7 @@ export async function updateMealEntry(id: string, quantity: number, food_item_id
     .update({ quantity, calories })
     .eq('id', id)
     .select('*, food_items(*)')
-    .single()
+    .single<MealEntry>()
 
   if (error) throw error
   return data

@@ -18,7 +18,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
-  const { signIn } = useAuthStore()
+  const signIn = useAuthStore((state) => state.signIn)
   const [error, setError] = useState<string | null>(null)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>({

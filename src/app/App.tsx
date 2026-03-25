@@ -1,13 +1,15 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom'
-import { useAuthStore } from '@/features/auth'
+import { useAuthStore, useAuthUser, useAuthLoading } from '@/features/auth'
 import { useUserProfile } from '@/features/profile'
 import { AuthPage, DashboardPage, HistoryPage, ProfilePage } from '@/pages'
 import { QueryProvider, ThemeProvider } from './providers'
 import { ProfileSetupModal } from './ProfileSetupModal'
 
 function AppRoutes() {
-  const { user, loading, initialize } = useAuthStore()
+  const user = useAuthUser()
+  const loading = useAuthLoading()
+  const initialize = useAuthStore((state) => state.initialize)
   const { data: profile, isLoading: profileLoading } = useUserProfile()
 
   useEffect(() => {

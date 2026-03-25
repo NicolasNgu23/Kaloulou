@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDailyMeals, useMealFilterStore, useDeleteMeal } from '@/features/meal-entry'
+import { useDailyMeals, useMealFilterStore, useIsSelectedDateToday, useDeleteMeal } from '@/features/meal-entry'
 import { useUserProfile } from '@/features/profile'
 import { CalorieSummary } from '@/widgets/calorie-summary'
 import { MealForm } from '@/widgets/meal-form'
@@ -9,7 +9,9 @@ import { formatDisplayDate } from '@/shared/lib/utils'
 import type { MealEntry } from '@/entities/meal'
 
 export function DashboardPage() {
-  const { selectedDate, setSelectedDate } = useMealFilterStore()
+  const selectedDate = useMealFilterStore((state) => state.selectedDate)
+  const setSelectedDate = useMealFilterStore((state) => state.setSelectedDate)
+  const isToday = useIsSelectedDateToday()
   const { data: meals = [], isLoading } = useDailyMeals(selectedDate)
   const { data: profile } = useUserProfile()
   const { mutate: deleteMeal } = useDeleteMeal()
@@ -33,8 +35,6 @@ export function DashboardPage() {
     d.setDate(d.getDate() + 1)
     setSelectedDate(d)
   }
-
-  const isToday = formatDisplayDate(selectedDate) === formatDisplayDate(new Date())
 
   return (
     <div className="space-y-6">

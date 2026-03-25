@@ -12,6 +12,12 @@ interface AuthState {
   initialize: () => Promise<void>
 }
 
+// Sélecteurs stricts — évitent les re-renders inutiles
+export const useAuthUser = () => useAuthStore((state) => state.user)
+export const useAuthLoading = () => useAuthStore((state) => state.loading)
+// Derived state : calculé à la volée depuis l'état brut
+export const useIsAuthenticated = () => useAuthStore((state) => state.user !== null)
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loading: true,

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUserProfile, useCreateProfile, useUpdateProfile } from '@/features/profile'
-import { useAuthStore } from '@/features/auth'
+import { useAuthStore, useAuthUser } from '@/features/auth'
 import { usePreferencesStore } from '@/shared/lib/stores/preferences'
 import { Card, CardHeader, CardBody, Button, Input, Select } from '@/shared/ui'
 import { createProfileSchema, type CreateProfile } from '@/entities/user'
@@ -11,10 +11,12 @@ import { calculateBMR, calculateDailyTarget } from '@/shared/lib/utils'
 
 export function ProfilePage() {
   const { data: profile, isLoading } = useUserProfile()
-  const { user, signOut } = useAuthStore()
+  const user = useAuthUser()
+  const signOut = useAuthStore((state) => state.signOut)
   const { mutateAsync: createProfile, isPending: isCreating } = useCreateProfile()
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile()
-  const { theme, setTheme } = usePreferencesStore()
+  const theme = usePreferencesStore((state) => state.theme)
+  const setTheme = usePreferencesStore((state) => state.setTheme)
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateProfile>({
     resolver: zodResolver(createProfileSchema),
@@ -88,8 +90,8 @@ export function ProfilePage() {
               <Input label="Taille (cm)" type="number" error={errors.height?.message} {...register('height', { valueAsNumber: true })} />
               <Input label="Poids (kg)" type="number" error={errors.weight?.message} {...register('weight', { valueAsNumber: true })} />
             </div>
-            <Select label="Genre" options={GENDERS as unknown as { value: string; label: string }[]} error={errors.gender?.message} {...register('gender')} />
-            <Select label="Objectif" options={GOALS as unknown as { value: string; label: string }[]} error={errors.goal?.message} {...register('goal')} />
+            <Select label="Genre" options={GENDERS} error={errors.gender?.message} {...register('gender')} />
+            <Select label="Objectif" options={GOALS} error={errors.goal?.message} {...register('goal')} />
             <Button type="submit" loading={isCreating || isUpdating} className="w-full">
               {profile ? 'Mettre à jour' : 'Créer mon profil'}
             </Button>

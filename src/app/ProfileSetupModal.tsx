@@ -1,14 +1,14 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateProfile } from '@/features/profile'
-import { useAuthStore } from '@/features/auth'
+import { useAuthUser } from '@/features/auth'
 import { Button, Input, Select } from '@/shared/ui'
 import { createProfileSchema, type CreateProfile } from '@/entities/user'
 import { GENDERS, GOALS } from '@/shared/lib/constants'
 import { calculateBMR, calculateDailyTarget } from '@/shared/lib/utils'
 
 export function ProfileSetupModal() {
-  const { user } = useAuthStore()
+  const user = useAuthUser()
   const { mutateAsync, isPending } = useCreateProfile()
 
   const { register, handleSubmit, formState: { errors } } = useForm<CreateProfile>({
@@ -43,8 +43,8 @@ export function ProfileSetupModal() {
               <Input label="Taille (cm)" type="number" error={errors.height?.message} {...register('height', { valueAsNumber: true })} />
               <Input label="Poids (kg)" type="number" error={errors.weight?.message} {...register('weight', { valueAsNumber: true })} />
             </div>
-            <Select label="Genre" options={GENDERS as unknown as { value: string; label: string }[]} error={errors.gender?.message} {...register('gender')} />
-            <Select label="Objectif" options={GOALS as unknown as { value: string; label: string }[]} error={errors.goal?.message} {...register('goal')} />
+            <Select label="Genre" options={GENDERS} error={errors.gender?.message} {...register('gender')} />
+            <Select label="Objectif" options={GOALS} error={errors.goal?.message} {...register('goal')} />
             <Button type="submit" loading={isPending} className="w-full" size="lg">
               Créer mon profil
             </Button>

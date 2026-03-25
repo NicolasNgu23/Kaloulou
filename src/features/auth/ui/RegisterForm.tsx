@@ -21,7 +21,7 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
-  const { signUp } = useAuthStore()
+  const signUp = useAuthStore((state) => state.signUp)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 

@@ -86,7 +86,7 @@ export function MealForm({ date, onSuccess }: MealFormProps) {
 
       <Select
         label="Type de repas"
-        options={MEAL_TYPES as unknown as { value: string; label: string }[]}
+        options={MEAL_TYPES}
         error={errors.meal_type?.message}
         {...register('meal_type')}
       />
