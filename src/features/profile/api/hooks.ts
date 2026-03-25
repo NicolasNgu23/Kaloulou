@@ -1,9 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getUserProfile, createUserProfile, updateUserProfile } from '@/entities/user/api'
 import type { CreateProfile, UpdateProfile } from '@/entities/user'
 
 export function useUserProfile() {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['user', 'profile'],
     queryFn: getUserProfile,
   })

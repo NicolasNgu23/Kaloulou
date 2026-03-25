@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateProfile } from '@/features/profile'
+import { useCreateProfile, useUserProfile } from '@/features/profile'
 import { useAuthUser } from '@/features/auth'
 import { Button, Input, Select } from '@/shared/ui'
 import { createProfileSchema, type CreateProfile } from '@/entities/user'
@@ -9,7 +9,10 @@ import { calculateBMR, calculateDailyTarget } from '@/shared/lib/utils'
 
 export function ProfileSetupModal() {
   const user = useAuthUser()
+  const { data: profile } = useUserProfile()
   const { mutateAsync, isPending } = useCreateProfile()
+
+  if (profile) return null
 
   const { register, handleSubmit, formState: { errors } } = useForm<CreateProfile>({
     resolver: zodResolver(createProfileSchema),

@@ -1,16 +1,15 @@
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { useAuthStore, useAuthUser, useAuthLoading } from '@/features/auth'
-import { useUserProfile } from '@/features/profile'
 import { AuthPage, DashboardPage, HistoryPage, ProfilePage } from '@/pages'
 import { QueryProvider, ThemeProvider } from './providers'
 import { ProfileSetupModal } from './ProfileSetupModal'
+import { ErrorBoundary, PageSkeleton } from '@/shared/ui'
 
 function AppRoutes() {
   const user = useAuthUser()
   const loading = useAuthLoading()
   const initialize = useAuthStore((state) => state.initialize)
-  const { data: profile, isLoading: profileLoading } = useUserProfile()
 
   useEffect(() => {
     initialize()
@@ -19,10 +18,7 @@ function AppRoutes() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-gray-500">Chargement...</p>
-        </div>
+        <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
       </div>
     )
   }
@@ -35,11 +31,13 @@ function AppRoutes() {
     )
   }
 
-  const showProfileSetup = !profileLoading && !profile
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {showProfileSetup && <ProfileSetupModal />}
+      <ErrorBoundary>
+        <Suspense>
+          <ProfileSetupModal />
+        </Suspense>
+      </ErrorBoundary>
 
       <div className="max-w-lg mx-auto pb-20">
         <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
@@ -47,16 +45,19 @@ function AppRoutes() {
         </header>
 
         <main className="px-4 py-6">
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/history" element={<HistoryPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <ErrorBoundary>
+            <Suspense fallback={<PageSkeleton />}>
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/history" element={<HistoryPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </main>
       </div>
 
-      {/* Bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div className="max-w-lg mx-auto flex">
           {[

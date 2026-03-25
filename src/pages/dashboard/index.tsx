@@ -12,7 +12,7 @@ export function DashboardPage() {
   const selectedDate = useMealFilterStore((state) => state.selectedDate)
   const setSelectedDate = useMealFilterStore((state) => state.setSelectedDate)
   const isToday = useIsSelectedDateToday()
-  const { data: meals = [], isLoading } = useDailyMeals(selectedDate)
+  const { data: meals } = useDailyMeals(selectedDate)
   const { data: profile } = useUserProfile()
   const { mutate: deleteMeal } = useDeleteMeal()
   const [showForm, setShowForm] = useState(false)
@@ -23,6 +23,7 @@ export function DashboardPage() {
     ...type,
     meals: meals.filter(m => m.meal_type === type.value),
   }))
+
 
   const prevDay = () => {
     const d = new Date(selectedDate)
@@ -54,12 +55,7 @@ export function DashboardPage() {
         </button>
       </div>
 
-      {/* Calorie summary */}
-      {isLoading ? (
-        <div className="h-48 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
-      ) : (
-        <CalorieSummary meals={meals} target={target} />
-      )}
+      <CalorieSummary meals={meals} target={target} />
 
       {/* Add meal button */}
       <Button onClick={() => setShowForm(!showForm)} className="w-full" variant={showForm ? 'secondary' : 'primary'}>

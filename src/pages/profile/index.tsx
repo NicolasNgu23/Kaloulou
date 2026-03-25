@@ -10,7 +10,7 @@ import { GENDERS, GOALS } from '@/shared/lib/constants'
 import { calculateBMR, calculateDailyTarget } from '@/shared/lib/utils'
 
 export function ProfilePage() {
-  const { data: profile, isLoading } = useUserProfile()
+  const { data: profile } = useUserProfile()
   const user = useAuthUser()
   const signOut = useAuthStore((state) => state.signOut)
   const { mutateAsync: createProfile, isPending: isCreating } = useCreateProfile()
@@ -47,10 +47,6 @@ export function ProfilePage() {
     } else {
       await createProfile({ ...data, daily_calorie_target })
     }
-  }
-
-  if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Chargement...</div>
   }
 
   return (

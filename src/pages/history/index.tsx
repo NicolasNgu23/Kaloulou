@@ -13,7 +13,7 @@ export function HistoryPage() {
   const dates = getLastNDays(7)
   const weekRange = getCurrentWeekRange()
 
-  const { data: meals = [], isLoading } = useMealHistory(
+  const { data: meals } = useMealHistory(
     view === '7days' ? dates[0] : weekRange.from,
     view === '7days' ? dates[dates.length - 1] : weekRange.to,
   )
@@ -65,11 +65,7 @@ export function HistoryPage() {
           </div>
         </CardHeader>
         <CardBody>
-          {isLoading ? (
-            <div className="h-64 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse" />
-          ) : (
-            <CalorieChart meals={meals} target={target} />
-          )}
+          <CalorieChart meals={meals} target={target} />
         </CardBody>
       </Card>
 

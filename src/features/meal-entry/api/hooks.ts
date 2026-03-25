@@ -1,16 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getDailyMeals, getMealHistory, addMealEntry, updateMealEntry, deleteMealEntry } from '@/entities/meal/api'
 import { formatDate } from '@/shared/lib/utils'
 
 export function useDailyMeals(date: Date) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['meals', 'daily', formatDate(date)],
     queryFn: () => getDailyMeals(date),
   })
 }
 
 export function useMealHistory(from: Date, to: Date) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['meals', 'history', formatDate(from), formatDate(to)],
     queryFn: () => getMealHistory(from, to),
   })

@@ -1,10 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getFoodItems, createFoodItem, deleteFoodItem } from '@/entities/food-item/api'
 import { useFoodFilterStore } from '../model/store'
 
 export function useFoodItems() {
   const { search } = useFoodFilterStore()
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['food-items', search],
     queryFn: () => getFoodItems(search || undefined),
   })
