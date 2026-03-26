@@ -1,28 +1,29 @@
-# 🥗 Kaloulou — Suivi Calorique
+# CoachFlow — SaaS de gestion pour coachs fitness
 
-Application web de suivi nutritionnel permettant de logger ses repas, calculer ses apports caloriques et suivre ses objectifs au quotidien.
+Plateforme web permettant aux coachs fitness de gérer leurs clients, créer des programmes d'entraînement personnalisés et accéder à une bibliothèque d'exercices.
 
 ## Fonctionnalités
 
 - **Authentification** — Inscription / Connexion via Supabase Auth
-- **Profil utilisateur** — Renseignement des données physiques (âge, taille, poids, objectif) avec calcul automatique de l'objectif calorique journalier
-- **Dashboard** — Vue du jour avec résumé des calories consommées et graphique de répartition par repas
-- **Journal alimentaire** — Ajout de repas (petit-déjeuner, déjeuner, dîner, collation) avec recherche d'aliments et saisie de la quantité
-- **Historique** — Consultation des entrées passées avec graphique d'évolution
-- **Mode sombre** — Thème clair / sombre persistant
+- **Profil coach** — Configuration du profil à la première connexion (prénom, nom, bio)
+- **Dashboard** — Vue d'ensemble avec stats (clients, programmes, plan) et accès rapide
+- **Clients** — Liste avec recherche et filtre par objectif, fiche détaillée, assignation de programmes
+- **Programmes** — Création de programmes avec niveaux de difficulté, builder de séances (jours + exercices)
+- **Exercices** — Bibliothèque avec filtres (groupe musculaire, équipement), favoris, création d'exercices custom
+- **Profil** — Modification des informations coach, affichage du plan (Free / Pro)
 
 ## Stack technique
 
 | Couche | Technologie |
 |---|---|
-| Framework | React 19 + TypeScript |
+| Framework | React 19 + TypeScript strict |
 | Build | Vite |
 | Style | Tailwind CSS v4 |
+| Architecture | Feature-Sliced Design (FSD) |
 | Backend / Auth / BDD | Supabase (PostgreSQL + RLS) |
-| État global | Zustand |
-| Requêtes serveur | TanStack Query v5 |
+| État global | Zustand (sélecteurs stricts + derived state) |
+| Requêtes serveur | TanStack Query v5 (custom hooks) |
 | Formulaires | React Hook Form + Zod |
-| Graphiques | Recharts |
 | Tests | Vitest + Testing Library |
 
 ## Prérequis
@@ -30,13 +31,13 @@ Application web de suivi nutritionnel permettant de logger ses repas, calculer s
 - Node.js ≥ 18
 - Un projet Supabase (gratuit sur [supabase.com](https://supabase.com))
 
-## Installation & lancement
+## Lancement
 
 ### 1. Cloner le dépôt
 
 ```bash
-git clone <url-du-repo>
-cd kaloulou
+git clone https://github.com/NicolasNgu23/Kaloulou.git
+cd Kaloulou
 ```
 
 ### 2. Installer les dépendances
@@ -47,13 +48,11 @@ npm install
 
 ### 3. Configurer les variables d'environnement
 
-Copier le fichier d'exemple et renseigner vos clés Supabase :
-
 ```bash
 cp .env.example .env
 ```
 
-Éditer `.env` :
+Éditer `.env` avec vos clés Supabase :
 
 ```env
 VITE_SUPABASE_URL=https://<votre-project-ref>.supabase.co
@@ -64,13 +63,14 @@ VITE_SUPABASE_ANON_KEY=<votre-anon-key>
 
 ### 4. Initialiser la base de données
 
-Dans l'éditeur SQL de Supabase (ou via la CLI), exécuter le fichier de migration :
+Dans l'éditeur SQL de Supabase (**SQL Editor → New query**), exécuter les deux migrations dans l'ordre :
 
 ```
-supabase/migrations/001_initial_schema.sql
+supabase/migrations/001_initial_schema.sql   ← tables nutrition (legacy)
+supabase/migrations/002_coachflow_schema.sql ← tables CoachFlow (coach_profiles, clients, programs, exercises...)
 ```
 
-Ce script crée les tables `profiles`, `food_items`, `meal_entries` et active les politiques Row Level Security (RLS).
+> Ces scripts créent toutes les tables et activent les politiques Row Level Security (RLS).
 
 ### 5. Lancer le serveur de développement
 
@@ -80,93 +80,29 @@ npm run dev
 
 L'application est accessible sur [http://localhost:5173](http://localhost:5173).
 
+À la première connexion, un modal vous invite à configurer votre profil coach.
+
 ## Scripts disponibles
 
 | Commande | Description |
 |---|---|
 | `npm run dev` | Serveur de développement avec HMR |
-| `npm run build` | Compilation TypeScript + build de production |
+| `npm run build` | Vérification TypeScript + build de production |
 | `npm run preview` | Prévisualisation du build de production |
 | `npm run lint` | Analyse statique ESLint |
 | `npm run test` | Lancer les tests (Vitest) |
-| `npm run test:ui` | Interface visuelle des tests |
 
 ## Structure du projet
 
 ```
 src/
-├── app/          # Composant racine, providers, routing
-├── entities/     # Modèles métier (user, food-item, meal)
-├── features/     # Fonctionnalités (auth, food, meal-entry, profile)
-├── pages/        # Pages de l'application
-├── shared/       # Utilitaires, UI génériques, client Supabase
-├── tests/        # Tests unitaires et d'intégration
-└── widgets/      # Blocs UI composites (graphiques, formulaires)
+├── app/          # Routing, providers, ProfileSetupModal
+├── entities/     # Modèles métier + API Supabase (coach, client, exercise, program)
+├── features/     # Hooks React Query par domaine (auth, coach, client, program, exercise)
+├── pages/        # Pages (dashboard, clients, programs, exercises, profile, auth, landing)
+├── shared/       # UI génériques, stores Zustand, queryKeys, client Supabase
+├── tests/        # Tests unitaires (Vitest + RTL)
+└── widgets/      # Blocs UI composites
 ```
 
-L'architecture suit les principes de **Feature-Sliced Design (FSD)**.
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+L'architecture suit les principes de **Feature-Sliced Design (FSD)** : les imports vont toujours des couches hautes vers les couches basses (`pages → features → entities → shared`).
