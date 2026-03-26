@@ -8,12 +8,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, helperText, className = '', id, ...props }, ref) => {
-    const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
-
+    const inputId = id || label?.toLowerCase().replaceAll(/\s+/g, '-')
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor={inputId} className="text-xs font-medium uppercase tracking-wider text-white/45">
             {label}
           </label>
         )}
@@ -21,19 +20,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={`
-            w-full px-3 py-2 border rounded-lg text-sm transition-colors
-            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-            disabled:bg-gray-50 disabled:text-gray-500
-            ${error ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white'}
+            h-10 w-full rounded-xl border bg-white/[0.06] px-3.5 text-sm text-white
+            placeholder:text-white/30 transition duration-150
+            focus:outline-none focus:ring-2
+            disabled:cursor-not-allowed disabled:opacity-50
+            ${error
+              ? 'border-red-500/40 focus:border-red-500/60 focus:ring-red-500/15'
+              : 'border-white/[0.08] hover:border-white/15 focus:border-[#F5C93E]/50 focus:ring-[#F5C93E]/10'
+            }
             ${className}
           `}
           {...props}
         />
-        {error && <p className="text-xs text-red-600">{error}</p>}
-        {helperText && !error && <p className="text-xs text-gray-500">{helperText}</p>}
+        {error && <p className="text-xs text-red-400">{error}</p>}
+        {helperText && !error && <p className="text-xs text-white/35">{helperText}</p>}
       </div>
     )
   }
 )
-
 Input.displayName = 'Input'

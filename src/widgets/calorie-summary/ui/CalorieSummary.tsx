@@ -7,67 +7,118 @@ interface CalorieSummaryProps {
 }
 
 export function CalorieSummary({ meals, target }: CalorieSummaryProps) {
-  const consumed = meals.reduce((sum, m) => sum + m.calories, 0)
+  const safeTarget = Math.max(target, 1)
+  const consumed = meals.reduce((sum, meal) => sum + meal.calories, 0)
   const remaining = target - consumed
-  const percentage = Math.min((consumed / target) * 100, 100)
+  const percentage = Math.min((consumed / safeTarget) * 100, 100)
 
-  const proteins = meals.reduce((sum, m) => sum + (m.food_items?.proteins ?? 0) * m.quantity / 100, 0)
-  const carbs = meals.reduce((sum, m) => sum + (m.food_items?.carbs ?? 0) * m.quantity / 100, 0)
-  const fats = meals.reduce((sum, m) => sum + (m.food_items?.fats ?? 0) * m.quantity / 100, 0)
+  const proteins = meals.reduce((sum, meal) => sum + ((meal.food_items?.proteins ?? 0) * meal.quantity) / 100, 0)
+  const carbs = meals.reduce((sum, meal) => sum + ((meal.food_items?.carbs ?? 0) * meal.quantity) / 100, 0)
+  const fats = meals.reduce((sum, meal) => sum + ((meal.food_items?.fats ?? 0) * meal.quantity) / 100, 0)
 
   const isOverTarget = consumed > target
 
+  // SVG circle progress
+  const radius = 52
+  const circumference = 2 * Math.PI * radius
+  const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`
+
   return (
-    <Card>
-      <CardBody>
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Calories consommées</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{consumed}</p>
-            <p className="text-sm text-gray-500">sur {target} kcal</p>
+    <Card className="overflow-hidden">
+      <CardBody className="pt-5">
+        <div className="grid gap-5 xl:grid-cols-[auto_1fr] xl:items-center">
+          {/* Progress ring */}
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-[#F1F5F9] bg-[#F8FAFC] p-5">
+            <div className="relative flex h-36 w-36 items-center justify-center">
+              <svg viewBox="0 0 120 120" className="h-36 w-36 -rotate-90">
+                <circle cx="60" cy="60" r={radius} fill="none" stroke="#E2E8F0" strokeWidth="8" />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r={radius}
+                  fill="none"
+                  stroke={isOverTarget ? '#DC2626' : '#16A34A'}
+                  strokeWidth="8"
+                  strokeDasharray={strokeDasharray}
+                  strokeLinecap="round"
+                  className="transition-all duration-500"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <p className="text-2xl font-bold tracking-tight text-[#0F172A]">{Math.round(percentage)}%</p>
+                <p className="text-xs text-[#94A3B8]">de l objectif</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#94A3B8]">Consomme</p>
+              <p className="mt-1 text-2xl font-bold tracking-tight text-[#0F172A]">{consumed}</p>
+              <p className="text-xs text-[#94A3B8]">sur {target} kcal</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Restant</p>
-            <p className={`text-2xl font-bold ${isOverTarget ? 'text-red-500' : 'text-primary-600'}`}>
-              {isOverTarget ? '+' : ''}{Math.abs(remaining)}
-            </p>
-            <p className="text-sm text-gray-500">kcal</p>
-          </div>
-        </div>
 
-        <div className="mb-6">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>0</span>
-            <span>{target} kcal</span>
-          </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-            <div
-              className={`h-3 rounded-full transition-all duration-500 ${isOverTarget ? 'bg-red-500' : 'bg-primary-500'}`}
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
-        </div>
+          {/* Right side */}
+          <div className="space-y-3">
+            <div className="grid gap-2.5 sm:grid-cols-3">
+              <SummaryTile
+                label="Reste"
+                value={`${Math.abs(remaining)} kcal`}
+                detail={isOverTarget ? 'au-dessus' : 'avant la cible'}
+                variant={isOverTarget ? 'danger' : 'success'}
+              />
+              <SummaryTile label="Repas" value={`${meals.length}`} detail="elements journalises" variant="neutral" />
+              <SummaryTile label="Objectif" value={`${target} kcal`} detail="repere du jour" variant="neutral" />
+            </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <MacroCard label="Protéines" value={proteins} color="blue" />
-          <MacroCard label="Glucides" value={carbs} color="yellow" />
-          <MacroCard label="Lipides" value={fats} color="red" />
+            <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-[#94A3B8]">Macros</p>
+                  <h3 className="mt-1 text-base font-semibold text-[#0F172A]">Repartition nutritionnelle</h3>
+                </div>
+                <span className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1 text-xs font-medium text-[#64748B]">
+                  Calculees
+                </span>
+              </div>
+
+              <div className="mt-3 grid gap-2.5 md:grid-cols-3">
+                <MacroCard label="Proteines" value={proteins} color="bg-[#EFF6FF] text-[#1D4ED8]" />
+                <MacroCard label="Glucides" value={carbs} color="bg-[#FFFBEB] text-[#B45309]" />
+                <MacroCard label="Lipides" value={fats} color="bg-[#F0FDF4] text-[#15803D]" />
+              </div>
+            </div>
+          </div>
         </div>
       </CardBody>
     </Card>
   )
 }
 
-function MacroCard({ label, value, color }: { label: string; value: number; color: string }) {
-  const colors: Record<string, string> = {
-    blue: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20',
-    yellow: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20',
-    red: 'text-red-600 bg-red-50 dark:bg-red-900/20',
+function SummaryTile({ label, value, detail, variant }: { label: string; value: string; detail: string; variant: 'success' | 'danger' | 'neutral' }) {
+  const styles = {
+    success: 'border-[#BBF7D0] bg-[#F0FDF4]',
+    danger: 'border-[#FECACA] bg-[#FEF2F2]',
+    neutral: 'border-[#F1F5F9] bg-[#F8FAFC]',
   }
+  const textStyles = {
+    success: 'text-[#16A34A]',
+    danger: 'text-[#DC2626]',
+    neutral: 'text-[#0F172A]',
+  }
+
   return (
-    <div className={`rounded-lg p-3 text-center ${colors[color]}`}>
-      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
-      <p className="text-lg font-bold">{Math.round(value)}g</p>
+    <div className={`rounded-xl border px-3.5 py-3.5 ${styles[variant]}`}>
+      <p className="text-xs font-semibold uppercase tracking-widest text-[#94A3B8]">{label}</p>
+      <p className={`mt-1.5 text-base font-bold tracking-tight ${textStyles[variant]}`}>{value}</p>
+      <p className="mt-0.5 text-xs text-[#94A3B8]">{detail}</p>
+    </div>
+  )
+}
+
+function MacroCard({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className={`rounded-lg px-3.5 py-3 ${color}`}>
+      <p className="text-xs font-semibold opacity-70">{label}</p>
+      <p className="mt-1 text-xl font-bold tracking-tight">{Math.round(value)}g</p>
     </div>
   )
 }

@@ -42,9 +42,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   if (success) {
     return (
-      <div className="text-center p-4 bg-green-50 rounded-lg">
-        <p className="text-green-700 font-medium">Compte créé !</p>
-        <p className="text-green-600 text-sm mt-1">Vérifiez votre email pour confirmer votre compte.</p>
+      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-5 text-center">
+        <p className="font-semibold text-emerald-400">Compte créé !</p>
+        <p className="mt-1 text-sm text-white/50">Vérifiez votre email pour confirmer votre compte.</p>
       </div>
     )
   }
@@ -72,7 +72,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         error={errors.confirmPassword?.message}
         {...register('confirmPassword')}
       />
-      {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+      {error && <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</p>}
       <Button type="submit" loading={isSubmitting} className="w-full" size="lg">
         Créer mon compte
       </Button>

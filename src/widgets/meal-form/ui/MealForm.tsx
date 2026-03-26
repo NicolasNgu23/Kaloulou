@@ -10,8 +10,8 @@ import { formatDate } from '@/shared/lib/utils'
 import type { MealType } from '@/app/types'
 
 const mealFormSchema = z.object({
-  food_item_id: z.string().min(1, 'Sélectionnez un aliment'),
-  quantity: z.number().positive('La quantité doit être positive'),
+  food_item_id: z.string().min(1, 'Selectionnez un aliment'),
+  quantity: z.number().positive('La quantite doit etre positive'),
   meal_type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
 })
 
@@ -30,70 +30,83 @@ export function MealForm({ date, onSuccess }: MealFormProps) {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<MealFormData>({
     resolver: zodResolver(mealFormSchema),
-    defaultValues: { meal_type: 'breakfast' as MealType, quantity: 100 },
+    defaultValues: { meal_type: 'breakfast' as MealType, quantity: 100, food_item_id: '' },
   })
 
-  const filtered = foodItems.filter(f => f.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filtered = foodItems.filter((food) => food.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const foodOptions = filtered.map((food) => ({
+    value: food.id,
+    label: `${food.name} (${food.calories_per_100g} kcal/100g)`,
+  }))
 
   const onSubmit = async (data: MealFormData) => {
     try {
       setError(null)
       await addMeal({ ...data, date: formatDate(date) })
-      reset()
+      reset({ meal_type: 'breakfast', quantity: 100, food_item_id: '' })
       setSearchTerm('')
       onSuccess?.()
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Erreur lors de l'ajout")
+      setError(e instanceof Error ? e.message : "Erreur lors de l ajout")
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Rechercher un aliment</label>
-        <input
+      <div className="grid gap-4 md:grid-cols-2">
+        <Input
+          label="Recherche"
           type="text"
-          placeholder="Ex: pomme, poulet..."
+          placeholder="Ex: pomme, poulet, yaourt"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+          onChange={(event) => setSearchTerm(event.target.value)}
+          helperText={`${foodOptions.length} resultat${foodOptions.length > 1 ? 's' : ''} disponible${foodOptions.length > 1 ? 's' : ''}`}
+        />
+        <Input
+          label="Date selectionnee"
+          value={formatDate(date)}
+          readOnly
+          helperText="Le repas sera associe a cette date"
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Aliment</label>
-        <select
-          {...register('food_item_id')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+      <Select
+        label="Aliment"
+        error={errors.food_item_id?.message}
+        {...register('food_item_id')}
+      >
+        <option value="" disabled>-- Selectionnez un aliment --</option>
+        {foodOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </Select>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Input
+          label="Quantite (g)"
+          type="number"
+          min="1"
+          error={errors.quantity?.message}
+          {...register('quantity', { valueAsNumber: true })}
+        />
+        <Select
+          label="Type de repas"
+          error={errors.meal_type?.message}
+          {...register('meal_type')}
         >
-          <option value="">-- Sélectionnez --</option>
-          {filtered.map(f => (
-            <option key={f.id} value={f.id}>
-              {f.name} ({f.calories_per_100g} kcal/100g)
-            </option>
+          {MEAL_TYPES.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
-        </select>
-        {errors.food_item_id && <p className="text-xs text-red-600">{errors.food_item_id.message}</p>}
+        </Select>
       </div>
 
-      <Input
-        label="Quantité (g)"
-        type="number"
-        min="1"
-        error={errors.quantity?.message}
-        {...register('quantity', { valueAsNumber: true })}
-      />
+      {error && (
+        <p className="rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm font-medium text-[#DC2626]">
+          {error}
+        </p>
+      )}
 
-      <Select
-        label="Type de repas"
-        options={MEAL_TYPES}
-        error={errors.meal_type?.message}
-        {...register('meal_type')}
-      />
-
-      {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
-
-      <Button type="submit" loading={isPending} className="w-full">
+      <Button type="submit" loading={isPending} className="w-full" size="lg">
         Ajouter le repas
       </Button>
     </form>

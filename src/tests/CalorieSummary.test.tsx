@@ -36,7 +36,7 @@ describe('CalorieSummary', () => {
 
   it('affiche les calories restantes', () => {
     render(<CalorieSummary meals={mockMeals} target={2000} />)
-    expect(screen.getByText('1200')).toBeInTheDocument()
+    expect(screen.getByText('1200 kcal')).toBeInTheDocument()
   })
 
   it('affiche la cible', () => {
