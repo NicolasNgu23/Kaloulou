@@ -1,11 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&display=swap");
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #1C1E2E;
+  background-image:
+    radial-gradient(ellipse 70% 55% at 0% 100%, rgba(62, 38, 16, 0.80) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 100% 0%, rgba(20, 40, 70, 0.45) 0%, transparent 55%);
+  min-height: 100vh;
+  color: #fff;
 }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+
+::selection { background: rgba(245, 201, 62, 0.35); color: #fff; }
+:focus-visible { outline: 2px solid rgba(245, 201, 62, 0.6); outline-offset: 2px; border-radius: 6px; }

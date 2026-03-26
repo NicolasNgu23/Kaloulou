@@ -51,7 +51,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         error={errors.password?.message}
         {...register('password')}
       />
-      {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+      {error && <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</p>}
       <Button type="submit" loading={isSubmitting} className="w-full" size="lg">
         Se connecter
       </Button>

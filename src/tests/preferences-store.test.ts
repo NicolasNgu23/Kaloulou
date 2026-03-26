@@ -3,22 +3,22 @@ import { usePreferencesStore } from '@/shared/lib/stores/preferences'
 
 describe('usePreferencesStore', () => {
   beforeEach(() => {
-    usePreferencesStore.setState({ theme: 'light', defaultView: 'day' })
+    usePreferencesStore.setState({ theme: 'light' })
   })
 
   it('a le bon état initial', () => {
-    const { theme, defaultView } = usePreferencesStore.getState()
+    const { theme } = usePreferencesStore.getState()
     expect(theme).toBe('light')
-    expect(defaultView).toBe('day')
   })
 
-  it('change le thème', () => {
+  it('change le thème en dark', () => {
     usePreferencesStore.getState().setTheme('dark')
     expect(usePreferencesStore.getState().theme).toBe('dark')
   })
 
-  it('change la vue par défaut', () => {
-    usePreferencesStore.getState().setDefaultView('week')
-    expect(usePreferencesStore.getState().defaultView).toBe('week')
+  it('change le thème en light', () => {
+    usePreferencesStore.getState().setTheme('dark')
+    usePreferencesStore.getState().setTheme('light')
+    expect(usePreferencesStore.getState().theme).toBe('light')
   })
 })

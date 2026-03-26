@@ -1,19 +1,18 @@
-import { type SelectHTMLAttributes, forwardRef } from 'react'
+import { type ReactNode, type SelectHTMLAttributes, forwardRef } from 'react'
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
   error?: string
-  options: ReadonlyArray<{ value: string; label: string }>
+  children?: ReactNode
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, options, className = '', id, ...props }, ref) => {
-    const selectId = id || label?.toLowerCase().replace(/\s+/g, '-')
-
+  ({ label, error, children, className = '', id, ...props }, ref) => {
+    const selectId = id || label?.toLowerCase().replaceAll(/\s+/g, '-')
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={selectId} className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor={selectId} className="text-xs font-medium uppercase tracking-wider text-white/45">
             {label}
           </label>
         )}
@@ -21,23 +20,21 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={`
-            w-full px-3 py-2 border rounded-lg text-sm transition-colors bg-white dark:bg-gray-800 dark:text-white
-            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-            ${error ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}
+            h-10 w-full cursor-pointer rounded-xl border bg-[#1C1E2E] px-3.5 text-sm text-white
+            transition duration-150 focus:outline-none focus:ring-2
+            ${error
+              ? 'border-red-500/40 focus:border-red-500/60 focus:ring-red-500/15'
+              : 'border-white/[0.08] hover:border-white/15 focus:border-[#F5C93E]/50 focus:ring-[#F5C93E]/10'
+            }
             ${className}
           `}
           {...props}
         >
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
+          {children}
         </select>
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {error && <p className="text-xs text-red-400">{error}</p>}
       </div>
     )
   }
 )
-
 Select.displayName = 'Select'
