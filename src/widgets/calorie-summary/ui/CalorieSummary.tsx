@@ -20,54 +20,52 @@ export function CalorieSummary({ meals, target }: CalorieSummaryProps) {
   return (
     <Card>
       <CardBody>
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Calories consommées</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{consumed}</p>
-            <p className="text-sm text-gray-500">sur {target} kcal</p>
+        <div className="border-b border-gray-300 dark:border-gray-700 pb-6 mb-6">
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Consommées</p>
+              <p className="text-4xl font-bold text-gray-900 dark:text-white">{consumed}</p>
+              <p className="text-xs text-gray-500 mt-1">sur {target} kcal</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Restant</p>
+              <p className={`text-4xl font-bold ${isOverTarget ? 'text-gray-500' : 'text-gray-900 dark:text-white'}`}>
+                {Math.abs(remaining)}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">kcal</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Restant</p>
-            <p className={`text-2xl font-bold ${isOverTarget ? 'text-red-500' : 'text-primary-600'}`}>
-              {isOverTarget ? '+' : ''}{Math.abs(remaining)}
-            </p>
-            <p className="text-sm text-gray-500">kcal</p>
-          </div>
-        </div>
 
-        <div className="mb-6">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>0</span>
-            <span>{target} kcal</span>
-          </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-            <div
-              className={`h-3 rounded-full transition-all duration-500 ${isOverTarget ? 'bg-red-500' : 'bg-primary-500'}`}
-              style={{ width: `${percentage}%` }}
-            />
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 font-medium">
+              <span>0</span>
+              <span>{Math.round((percentage))}%</span>
+              <span>{target}</span>
+            </div>
+            <div className="w-full bg-gray-300 dark:bg-gray-700 h-2">
+              <div
+                className={`h-2 transition-all duration-500 ${isOverTarget ? 'bg-gray-500' : 'bg-gray-900 dark:bg-white'}`}
+                style={{ width: `${percentage}%` }}
+              />
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <MacroCard label="Protéines" value={proteins} color="blue" />
-          <MacroCard label="Glucides" value={carbs} color="yellow" />
-          <MacroCard label="Lipides" value={fats} color="red" />
+          <MacroCard label="Protéines" value={proteins} />
+          <MacroCard label="Glucides" value={carbs} />
+          <MacroCard label="Lipides" value={fats} />
         </div>
       </CardBody>
     </Card>
   )
 }
 
-function MacroCard({ label, value, color }: { label: string; value: number; color: string }) {
-  const colors: Record<string, string> = {
-    blue: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20',
-    yellow: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20',
-    red: 'text-red-600 bg-red-50 dark:bg-red-900/20',
-  }
+function MacroCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className={`rounded-lg p-3 text-center ${colors[color]}`}>
-      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
-      <p className="text-lg font-bold">{Math.round(value)}g</p>
+    <div className="border border-gray-300 dark:border-gray-700 p-3 text-center">
+      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-xl font-bold text-gray-900 dark:text-white">{Math.round(value)}<span className="text-xs font-medium ml-1">g</span></p>
     </div>
   )
 }

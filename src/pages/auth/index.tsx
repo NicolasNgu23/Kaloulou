@@ -6,20 +6,20 @@ export function AuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary-700 dark:text-primary-400">🥗 Kaloulou</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Votre compagnon nutritionnel</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-wide">KALOULOU</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm uppercase tracking-wider">Votre compagnon sportif</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-6">
+        <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 p-8">
+          <div className="flex bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-700 p-1 mb-6">
             <button
               onClick={() => setMode('login')}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`flex-1 py-2 text-sm font-medium transition-colors ${
                 mode === 'login'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600'
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'
               }`}
             >
@@ -27,9 +27,9 @@ export function AuthPage() {
             </button>
             <button
               onClick={() => setMode('register')}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`flex-1 py-2 text-sm font-medium transition-colors ${
                 mode === 'register'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600'
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'
               }`}
             >

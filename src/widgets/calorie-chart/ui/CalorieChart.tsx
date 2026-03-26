@@ -33,8 +33,8 @@ export function CalorieChart({ meals, target, days = 7 }: CalorieChartProps) {
             formatter={(value) => [`${value} kcal`, 'Calories']}
             contentStyle={{ borderRadius: '8px', fontSize: '12px' }}
           />
-          <ReferenceLine y={target} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Objectif', position: 'right', fontSize: 11 }} />
-          <Bar dataKey="calories" fill="#22c55e" radius={[4, 4, 0, 0]} />
+          <ReferenceLine y={target} stroke="#374151" strokeDasharray="5 5" label={{ value: 'Objectif', position: 'right', fontSize: 11 }} />
+          <Bar dataKey="calories" fill="#1f2937" radius={[0, 0, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

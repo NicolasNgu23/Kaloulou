@@ -9,12 +9,17 @@ import { createProfileSchema, type CreateProfile } from '@/entities/user'
 import { GENDERS, GOALS } from '@/shared/lib/constants'
 import { calculateBMR, calculateDailyTarget } from '@/shared/lib/utils'
 
-export function ProfilePage() {
+const defaultViewOptions = [
+  { value: 'day', label: 'Vue jour' },
+  { value: 'week', label: 'Vue semaine' },
+]
+
+export function SettingsPage() {
   const { data: profile, isLoading } = useUserProfile()
   const { user, signOut } = useAuthStore()
   const { mutateAsync: createProfile, isPending: isCreating } = useCreateProfile()
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile()
-  const { theme, setTheme } = usePreferencesStore()
+  const { theme, defaultView, setTheme, setDefaultView } = usePreferencesStore()
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateProfile>({
     resolver: zodResolver(createProfileSchema),
@@ -53,24 +58,41 @@ export function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mon Profil</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Paramètres</h1>
 
-      {profile && (
-        <Card>
-          <CardBody>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-lg font-bold text-gray-900 dark:text-white">
-                {profile.gender === 'male' ? 'M' : 'F'}
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 dark:text-white">{profile.first_name} {profile.last_name}</p>
-                <p className="text-sm text-gray-500">{profile.email}</p>
-                <p className="text-sm text-gray-900 dark:text-white font-medium">{profile.daily_calorie_target} kcal / jour</p>
-              </div>
+      <Card>
+        <CardHeader>
+          <h2 className="font-semibold text-gray-900 dark:text-white">Préférences utilisateur</h2>
+        </CardHeader>
+        <CardBody className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Thème</span>
+            <div className="flex border border-gray-300 dark:border-gray-700">
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`px-3 py-1 text-xs font-medium ${theme === 'light' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'text-gray-600 dark:text-gray-300'}`}
+              >
+                Clair
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`px-3 py-1 text-xs font-medium border-l border-gray-300 dark:border-gray-700 ${theme === 'dark' ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'text-gray-600 dark:text-gray-300'}`}
+              >
+                Sombre
+              </button>
             </div>
-          </CardBody>
-        </Card>
-      )}
+          </div>
+
+          <Select
+            label="Vue par défaut"
+            value={defaultView}
+            onChange={(event) => setDefaultView(event.target.value as 'day' | 'week')}
+            options={defaultViewOptions}
+          />
+        </CardBody>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -91,26 +113,9 @@ export function ProfilePage() {
             <Select label="Genre" options={GENDERS as unknown as { value: string; label: string }[]} error={errors.gender?.message} {...register('gender')} />
             <Select label="Objectif" options={GOALS as unknown as { value: string; label: string }[]} error={errors.goal?.message} {...register('goal')} />
             <Button type="submit" loading={isCreating || isUpdating} className="w-full">
-              {profile ? 'Mettre à jour' : 'Créer mon profil'}
+              {profile ? 'Sauvegarder les informations' : 'Créer mon profil'}
             </Button>
           </form>
-        </CardBody>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <h2 className="font-semibold text-gray-900 dark:text-white">Préférences</h2>
-        </CardHeader>
-        <CardBody>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Thème sombre</span>
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`relative w-12 h-6 border-2 transition-colors ${theme === 'dark' ? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'}`}
-            >
-              <span className={`absolute top-0.5 w-4 h-4 bg-white dark:bg-gray-900 transition-transform ${theme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'}`} />
-            </button>
-          </div>
         </CardBody>
       </Card>
 

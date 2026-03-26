@@ -56,7 +56,7 @@ export function MealForm({ date, onSuccess }: MealFormProps) {
           placeholder="Ex: pomme, poulet..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+          className="w-full px-3 py-2 border-2 border-gray-300 text-sm focus:outline-none focus:border-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:border-white transition-colors"
         />
       </div>
 
@@ -64,7 +64,7 @@ export function MealForm({ date, onSuccess }: MealFormProps) {
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Aliment</label>
         <select
           {...register('food_item_id')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+          className="w-full px-3 py-2 border-2 border-gray-300 text-sm focus:outline-none focus:border-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:border-white transition-colors"
         >
           <option value="">-- Sélectionnez --</option>
           {filtered.map(f => (

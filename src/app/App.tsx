@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { useAuthStore } from '@/features/auth'
 import { useUserProfile } from '@/features/profile'
-import { AuthPage, DashboardPage, HistoryPage, ProfilePage } from '@/pages'
+import { AuthPage, DashboardPage, HistoryPage, ProfilePage, SettingsPage } from '@/pages'
 import { QueryProvider, ThemeProvider } from './providers'
 import { ProfileSetupModal } from './ProfileSetupModal'
 
@@ -40,8 +40,8 @@ function AppRoutes() {
       {showProfileSetup && <ProfileSetupModal />}
 
       <div className="max-w-lg mx-auto pb-20">
-        <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-          <h1 className="text-lg font-bold text-primary-700 dark:text-primary-400">🥗 Kaloulou</h1>
+        <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-300 dark:border-gray-700 px-4 py-4">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-wide">KALOULOU</h1>
         </header>
 
         <main className="px-4 py-6">
@@ -49,30 +49,30 @@ function AppRoutes() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>
 
       {/* Bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-300 dark:border-gray-700">
         <div className="max-w-lg mx-auto flex">
           {[
-            { to: '/', label: 'Dashboard', icon: '🏠' },
-            { to: '/history', label: 'Historique', icon: '📊' },
-            { to: '/profile', label: 'Profil', icon: '👤' },
-          ].map(({ to, label, icon }) => (
+            { to: '/', label: 'Dashboard' },
+            { to: '/history', label: 'Historique' },
+            { to: '/settings', label: 'Paramètres' },
+          ].map(({ to, label }) => (
             <NavLink
               key={to}
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
-                `flex-1 flex flex-col items-center py-3 text-xs transition-colors ${
-                  isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'
+                `flex-1 py-4 text-xs font-medium text-center transition-colors border-t-2 ${
+                  isActive ? 'text-gray-900 dark:text-white border-gray-900 dark:border-white' : 'text-gray-500 dark:text-gray-400 border-transparent'
                 }`
               }
             >
-              <span className="text-xl mb-1">{icon}</span>
               {label}
             </NavLink>
           ))}

@@ -40,23 +40,23 @@ export function DashboardPage() {
     <div className="space-y-6">
       {/* Date navigator */}
       <div className="flex items-center justify-between">
-        <button onClick={prevDay} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+        <button onClick={prevDay} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
           ←
         </button>
         <div className="text-center">
           <p className="font-semibold text-gray-900 dark:text-white capitalize">
             {formatDisplayDate(selectedDate)}
           </p>
-          {isToday && <span className="text-xs text-primary-600 font-medium">{"Aujourd'hui"}</span>}
+          {isToday && <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">AUJOURD'HUI</span>}
         </div>
-        <button onClick={nextDay} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" disabled={isToday}>
+        <button onClick={nextDay} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" disabled={isToday}>
           →
         </button>
       </div>
 
       {/* Calorie summary */}
       {isLoading ? (
-        <div className="h-48 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
+        <div className="h-48 bg-gray-100 dark:bg-gray-800 animate-pulse" />
       ) : (
         <CalorieSummary meals={meals} target={target} />
       )}

@@ -42,9 +42,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   if (success) {
     return (
-      <div className="text-center p-4 bg-green-50 rounded-lg">
-        <p className="text-green-700 font-medium">Compte créé !</p>
-        <p className="text-green-600 text-sm mt-1">Vérifiez votre email pour confirmer votre compte.</p>
+      <div className="text-center p-4 bg-gray-100 dark:bg-gray-700">
+        <p className="text-gray-900 dark:text-white font-medium">Compte créé !</p>
+        <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Vérifiez votre email pour confirmer votre compte.</p>
       </div>
     )
   }

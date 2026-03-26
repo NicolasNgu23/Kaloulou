@@ -38,22 +38,22 @@ export function HistoryPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Historique</h1>
 
-      <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+      <div className="flex bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-700 p-1">
         <button
           onClick={() => setView('7days')}
-          className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-            view === '7days' ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'
+          className={`flex-1 py-2 text-sm font-medium transition-colors ${
+            view === '7days' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600' : 'text-gray-500'
           }`}
         >
-          7 derniers jours
+          7 DERNIERS JOURS
         </button>
         <button
           onClick={() => setView('week')}
-          className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-            view === 'week' ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'
+          className={`flex-1 py-2 text-sm font-medium transition-colors ${
+            view === 'week' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600' : 'text-gray-500'
           }`}
         >
-          Cette semaine
+          CETTE SEMAINE
         </button>
       </div>
 
@@ -66,7 +66,7 @@ export function HistoryPage() {
         </CardHeader>
         <CardBody>
           {isLoading ? (
-            <div className="h-64 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse" />
+            <div className="h-64 bg-gray-100 dark:bg-gray-800 animate-pulse" />
           ) : (
             <CalorieChart meals={meals} target={target} />
           )}
@@ -87,8 +87,8 @@ export function HistoryPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-700 dark:text-gray-300">{calories} kcal</span>
                     {calories > 0 && (
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        isOver ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
+                      <span className={`text-xs font-medium px-2 py-0.5 border ${
+                        isOver ? 'border-gray-500 text-gray-500' : 'border-gray-400 text-gray-400'
                       }`}>
                         {isOver ? '+' : ''}{diff}
                       </span>
@@ -97,9 +97,9 @@ export function HistoryPage() {
                 </div>
                 {calories > 0 && (
                   <div className="mt-2">
-                    <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                    <div className="w-full bg-gray-300 dark:bg-gray-700 h-1.5">
                       <div
-                        className={`h-1.5 rounded-full ${isOver ? 'bg-red-400' : 'bg-primary-400'}`}
+                        className={`h-1.5 ${isOver ? 'bg-gray-500' : 'bg-gray-900 dark:bg-white'}`}
                         style={{ width: `${Math.min((calories / target) * 100, 100)}%` }}
                       />
                     </div>
